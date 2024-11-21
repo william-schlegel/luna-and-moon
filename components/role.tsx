@@ -23,6 +23,8 @@ export default function Role() {
 export function useRole(asArray?: boolean) {
   const { user } = useUser();
 
+  console.log('user', user);
+
   const roles =
     user?.organizationMemberships?.map((membership) => {
       const r = membership.role.split(':');

@@ -8,7 +8,7 @@ export type ValidTags =
   | ReturnType<typeof getIdTag>;
 
 export const CACHE_TAGS = {
-  artists: 'artists',
+  user: 'user',
   arts: 'arts',
   members: 'members',
   materials: 'materials',

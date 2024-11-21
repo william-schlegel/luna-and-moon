@@ -1,9 +1,9 @@
 import { db } from '@/drizzle/db';
 import { CACHE_TAGS, dbCache, getGlobalTag } from '@/lib/cache';
 
-export function getArtists() {
-  const cacheFn = dbCache(getArtistsInternal, {
-    tags: [getGlobalTag(CACHE_TAGS.artists)]
+export function getUsers() {
+  const cacheFn = dbCache(getUsersInternal, {
+    tags: [getGlobalTag(CACHE_TAGS.user)]
   });
 
   return cacheFn();
@@ -219,8 +219,8 @@ export function getArtists() {
 //   })
 // }
 
-async function getArtistsInternal() {
-  const data = await db.query.artist.findMany({
+async function getUsersInternal() {
+  const data = await db.query.user.findMany({
     orderBy: ({ memberSince }, { desc }) => desc(memberSince)
   });
   return data.map((artist) => ({
