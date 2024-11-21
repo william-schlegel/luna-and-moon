@@ -12,11 +12,14 @@ import {
 
 import Logo from './logo';
 import Role, { IsAdmin } from './role';
+import { Button } from './ui/button';
 
 function Header() {
   return (
-    <div className="grid grid-cols-[auto_1fr_auto] py-2">
-      <Logo />
+    <div className="grid grid-cols-[auto_1fr_auto] p-2">
+      <Link href="/">
+        <Logo />
+      </Link>
       <NavigationMenu className="mx-auto gap-8">
         <NavigationMenuList>
           <NavigationMenuItem>
@@ -45,7 +48,9 @@ function Header() {
         </NavigationMenuList>
       </NavigationMenu>
       <SignedOut>
-        <SignInButton />
+        <Button asChild variant="outline">
+          <SignInButton />
+        </Button>
       </SignedOut>
       <SignedIn>
         <div className="flex items-center gap-4">

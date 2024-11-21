@@ -1,6 +1,7 @@
-'use client';
+import { auth } from '@clerk/nextjs/server';
 
-import { useUser } from '@clerk/nextjs';
+import { getTierByName } from '@/data/subscriptionTiers';
+import { getUserSubscription } from '@/server/db/userSubscrption';
 
 import { Badge } from './ui/badge';
 
@@ -11,35 +12,55 @@ export const OrgMembersParams = {
   }
 };
 
-export default function Role() {
-  const { roles, isAdmin } = useRole();
+export default async function Role() {
+  const { sessionClaims, userId } = await auth();
+  if (!userId) return null;
+  const roles = sessionClaims?.roles ?? ['user'];
+  const isAdmin = roles.includes('admin');
+  const subscription = await getUserSubscription(userId);
+
   return (
     <Badge variant={isAdmin ? 'destructive' : 'outline'}>
-      {roles ?? '???'}
+      <div className="flex gap-1">
+        <span>{roles.join(', ')}</span>
+        <span>/</span>
+        <span>{getTierByName(subscription?.tier)}</span>
+      </div>
     </Badge>
   );
 }
 
-export function useRole(asArray?: boolean) {
-  const { user } = useUser();
-
-  console.log('user', user);
-
-  const roles =
-    user?.organizationMemberships?.map((membership) => {
-      const r = membership.role.split(':');
-      return r?.[1];
-    }) ?? [];
-
-  const isAdmin = roles.includes('admin');
-
-  return {
-    isAdmin,
-    roles: asArray ? roles : roles.join(', ')
-  };
+export async function IsAdmin({ children }: { children: React.ReactNode }) {
+  const hasAdminRole = await isAdmin();
+  return hasAdminRole ? <>{children}</> : null;
 }
 
-export function IsAdmin({ children }: { children: React.ReactNode }) {
-  const { isAdmin } = useRole();
-  return isAdmin ? <>{children}</> : null;
+export async function IsArtistOrAdmin({
+  children
+}: {
+  children: React.ReactNode;
+}) {
+  const hasAdminRole = await isAdmin();
+  const hasArtistSubscription = await isArtist();
+
+  return hasArtistSubscription || hasAdminRole ? <>{children}</> : null;
+}
+
+export async function isAdmin() {
+  const { sessionClaims } = await auth();
+  const roles = sessionClaims?.roles ?? ['user'];
+  const isAdmin = roles.includes('admin');
+  return isAdmin;
+}
+
+export async function isArtist() {
+  const { userId } = await auth();
+  if (!userId) return false;
+  const subscription = await getUserSubscription(userId);
+  const isArtist =
+    subscription?.tier === 'Artist' ||
+    subscription?.tier === 'AdvancedArtist' ||
+    subscription?.tier === 'ArtistFree';
+
+  return isArtist;
 }

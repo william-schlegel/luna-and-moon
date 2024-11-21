@@ -71,8 +71,9 @@ export async function getUserSubscriptionTier(userId: string) {
   return subscriptionTiers[subscription.tier];
 }
 
-function getUserSubscriptionInternal(userId: string) {
-  return db.query.user.findFirst({
+async function getUserSubscriptionInternal(userId: string) {
+  const data = await db.query.user.findFirst({
     where: ({ clerkId }, { eq }) => eq(clerkId, userId)
   });
+  return data;
 }

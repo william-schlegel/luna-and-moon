@@ -1,11 +1,12 @@
-import { Circle, Sheet, Stars, User } from 'lucide-react';
+import { Circle, Sheet, Stars, User, User2 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
-import { IsAdmin } from '@/components/role';
+import { IsAdmin, IsArtistOrAdmin } from '@/components/role';
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarHeader,
@@ -53,23 +54,25 @@ export function AppSidebar() {
         </div>
       </SidebarHeader>
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {artistMenu.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <Link href={item.url} legacyBehavior passHref>
-                    <ForwardedSideBarLink
-                      href={item.url}
-                      libelle={item.title}
-                      icon={<item.icon />}
-                    />
-                  </Link>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        <IsArtistOrAdmin>
+          <SidebarGroup>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {artistMenu.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <Link href={item.url} legacyBehavior passHref>
+                      <ForwardedSideBarLink
+                        href={item.url}
+                        libelle={item.title}
+                        icon={<item.icon />}
+                      />
+                    </Link>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </IsArtistOrAdmin>
         <IsAdmin>
           <SidebarGroup>
             <SidebarGroupContent>
@@ -90,6 +93,19 @@ export function AppSidebar() {
           </SidebarGroup>
         </IsAdmin>
       </SidebarContent>
+      <SidebarFooter>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Link href="/profile" legacyBehavior passHref>
+              <ForwardedSideBarLink
+                href="/profile"
+                libelle="Profile"
+                icon={<User2 />}
+              />
+            </Link>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
     </Sidebar>
   );
 }
