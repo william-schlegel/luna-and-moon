@@ -1,8 +1,15 @@
-import { Circle, Sheet, Stars, User, User2 } from 'lucide-react';
+import { Circle, Sheet, Stars, User, User2, UserCircle2 } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
 import { IsAdmin, IsArtistOrAdmin } from '@/components/role';
+import {
+  Menubar,
+  MenubarContent,
+  MenubarItem,
+  MenubarMenu,
+  MenubarTrigger
+} from '@/components/ui/menubar';
 import {
   Sidebar,
   SidebarContent,
@@ -15,8 +22,6 @@ import {
   SidebarMenuItem,
   SidebarTrigger
 } from '@/components/ui/sidebar';
-
-import Logo from './logo';
 
 const artistMenu = [
   {
@@ -46,12 +51,9 @@ const adminMenu = [
 
 export function AppSidebar() {
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar>
       <SidebarHeader>
-        <div className="flex flex-wrap items-center gap-4">
-          <Logo />
-          <SidebarTrigger />
-        </div>
+        <SidebarTrigger />
       </SidebarHeader>
       <SidebarContent>
         <IsArtistOrAdmin>
@@ -62,7 +64,6 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <Link href={item.url} legacyBehavior passHref>
                       <ForwardedSideBarLink
-                        href={item.url}
                         libelle={item.title}
                         icon={<item.icon />}
                       />
@@ -81,7 +82,6 @@ export function AppSidebar() {
                   <SidebarMenuItem key={item.title}>
                     <Link href={item.url} legacyBehavior passHref>
                       <ForwardedSideBarLink
-                        href={item.url}
                         libelle={item.title}
                         icon={<item.icon />}
                       />
@@ -96,13 +96,37 @@ export function AppSidebar() {
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
-            <Link href="/profile" legacyBehavior passHref>
-              <ForwardedSideBarLink
-                href="/profile"
-                libelle="Profile"
-                icon={<User2 />}
-              />
-            </Link>
+            <Menubar>
+              <MenubarMenu>
+                <MenubarTrigger>Mon compte</MenubarTrigger>
+                <MenubarContent>
+                  <MenubarItem>
+                    <Link
+                      href="/dashboard/my-account/profile"
+                      legacyBehavior
+                      passHref
+                    >
+                      <ForwardedSideBarLink
+                        libelle="Mon profile"
+                        icon={<User2 />}
+                      />
+                    </Link>
+                  </MenubarItem>
+                  <MenubarItem>
+                    <Link
+                      href="/dashboard/my-account/account"
+                      legacyBehavior
+                      passHref
+                    >
+                      <ForwardedSideBarLink
+                        libelle="Mon compte"
+                        icon={<UserCircle2 />}
+                      />
+                    </Link>
+                  </MenubarItem>
+                </MenubarContent>
+              </MenubarMenu>
+            </Menubar>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarFooter>
@@ -111,7 +135,6 @@ export function AppSidebar() {
 }
 
 interface SideBarLinkProps {
-  href: string;
   libelle: string;
   icon: React.ReactNode;
 }
@@ -120,10 +143,10 @@ interface SideBarLinkProps {
 const SideBarLink: React.ForwardRefRenderFunction<
   HTMLAnchorElement,
   SideBarLinkProps
-> = ({ href, libelle, icon }, ref) => {
+> = ({ libelle, icon }, ref) => {
   return (
     <SidebarMenuButton asChild>
-      <a href={href} ref={ref}>
+      <a ref={ref}>
         {icon}
         <span>{libelle}</span>
       </a>

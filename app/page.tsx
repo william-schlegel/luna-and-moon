@@ -1,7 +1,16 @@
-export default function Home() {
+export default async function Home() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      Luna & moon
+    <div className="container mx-auto grid gap-8 py-8">
+      <h1>Luna & Moon</h1>
+      <section>
+        <h2>Dernières oeuvres</h2>
+      </section>
+      <section>
+        <h2>Evènements à venir</h2>
+      </section>
+      <section>
+        <h2>Artistes</h2>
+      </section>
     </div>
   );
 }

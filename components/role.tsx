@@ -15,14 +15,14 @@ export const OrgMembersParams = {
 export default async function Role() {
   const { sessionClaims, userId } = await auth();
   if (!userId) return null;
-  const roles = sessionClaims?.roles ?? ['user'];
-  const isAdmin = roles.includes('admin');
+  const role = sessionClaims?.role ?? 'user';
+  const isAdmin = role === 'admin';
   const subscription = await getUserSubscription(userId);
 
   return (
     <Badge variant={isAdmin ? 'destructive' : 'outline'}>
       <div className="flex gap-1">
-        <span>{roles.join(', ')}</span>
+        <span className="capitalize">{role}</span>
         <span>/</span>
         <span>{getTierByName(subscription?.tier)}</span>
       </div>
@@ -33,6 +33,21 @@ export default async function Role() {
 export async function IsAdmin({ children }: { children: React.ReactNode }) {
   const hasAdminRole = await isAdmin();
   return hasAdminRole ? <>{children}</> : null;
+}
+
+export async function IsUser({ children }: { children: React.ReactNode }) {
+  const hasAdminRole = await isAdmin();
+  return hasAdminRole ? null : <>{children}</>;
+}
+
+export async function IsVisitor({ children }: { children: React.ReactNode }) {
+  const { userId } = await auth();
+  return userId ? null : <>{children}</>;
+}
+
+export async function IsConnected({ children }: { children: React.ReactNode }) {
+  const { userId } = await auth();
+  return userId ? <>{children}</> : null;
 }
 
 export async function IsArtistOrAdmin({
@@ -48,8 +63,8 @@ export async function IsArtistOrAdmin({
 
 export async function isAdmin() {
   const { sessionClaims } = await auth();
-  const roles = sessionClaims?.roles ?? ['user'];
-  const isAdmin = roles.includes('admin');
+  const role = sessionClaims?.role ?? 'user';
+  const isAdmin = role === 'admin';
   return isAdmin;
 }
 
