@@ -1,12 +1,45 @@
+import { TierNames } from '@/data/subscriptionTiers';
 import { db } from '@/drizzle/db';
-import { CACHE_TAGS, dbCache, getGlobalTag } from '@/lib/cache';
+import { CACHE_TAGS, dbCache, getGlobalTag, getIdTag } from '@/lib/cache';
 
-export function getUsers() {
-  const cacheFn = dbCache(getUsersInternal, {
+export function getUsers(tier?: TierNames | TierNames[]) {
+  const cacheFn = dbCache(() => getUsersInternal(tier), {
     tags: [getGlobalTag(CACHE_TAGS.user)]
   });
 
   return cacheFn();
+}
+
+async function getUsersInternal(tier?: TierNames | TierNames[]) {
+  const data = await db.query.user.findMany({
+    where: tier
+      ? ({ tier }, { eq, or }) =>
+          Array.isArray(tier)
+            ? or(...tier.map((t) => eq(tier, t)))
+            : eq(tier, tier)
+      : undefined,
+    orderBy: ({ memberSince }, { desc }) => desc(memberSince)
+  });
+  return data.map((artist) => ({
+    id: artist.id,
+    name: artist.name,
+    memberSince: artist.memberSince,
+    tier: artist.tier
+  }));
+}
+
+export async function getUser(userId: string) {
+  const cacheFn = dbCache(() => getUserInternal(userId), {
+    tags: [getIdTag(userId, CACHE_TAGS.user)]
+  });
+
+  return cacheFn();
+}
+async function getUserInternal(userId: string) {
+  const data = await db.query.user.findFirst({
+    where: ({ clerkId }, { eq }) => eq(clerkId, userId)
+  });
+  return data;
 }
 
 // export function getProductCustomization({
@@ -218,17 +251,6 @@ export function getUsers() {
 //     id: productId,
 //   })
 // }
-
-async function getUsersInternal() {
-  const data = await db.query.user.findMany({
-    orderBy: ({ memberSince }, { desc }) => desc(memberSince)
-  });
-  return data.map((artist) => ({
-    id: artist.id,
-    name: artist.name,
-    memberSince: artist.memberSince
-  }));
-}
 
 // async function getProductCustomizationInternal({
 //   userId,

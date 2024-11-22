@@ -2,7 +2,6 @@ import { SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import React from 'react';
 
-import { AppSidebar } from '@/app/dashboard/app-sidebar';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -12,18 +11,13 @@ import {
 } from '@/components/ui/navigation-menu';
 
 import Logo from './logo';
-import Role, { IsAdmin, IsArtistOrAdmin, IsUser } from './role';
+import Role, { IsArtistOrAdmin, IsUser } from './role';
 import { Button } from './ui/button';
-import { SidebarTrigger } from './ui/sidebar';
 
 function Header() {
   return (
     <div className="grid h-min grid-cols-[auto_1fr_auto] p-2">
       <div className="flex items-center gap-4">
-        <IsArtistOrAdmin>
-          <SidebarTrigger />
-          <AppSidebar />
-        </IsArtistOrAdmin>
         <Link href="/">
           <Logo />
         </Link>
@@ -44,7 +38,7 @@ function Header() {
               </NavigationMenuLink>
             </Link>
           </NavigationMenuItem>
-          <IsAdmin>
+          <IsArtistOrAdmin>
             <NavigationMenuItem>
               <Link href="/dashboard" legacyBehavior passHref>
                 <NavigationMenuLink className={navigationMenuTriggerStyle()}>
@@ -52,7 +46,7 @@ function Header() {
                 </NavigationMenuLink>
               </Link>
             </NavigationMenuItem>
-          </IsAdmin>
+          </IsArtistOrAdmin>
           <IsUser>
             <NavigationMenuItem>
               <Link

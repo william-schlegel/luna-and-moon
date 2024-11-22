@@ -1,27 +1,22 @@
-import { Circle, Sheet, Stars, User, User2, UserCircle2 } from 'lucide-react';
+import { currentUser } from '@clerk/nextjs/server';
+import { Circle, Sheet, Stars, User } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
 import { IsAdmin, IsArtistOrAdmin } from '@/components/role';
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger
-} from '@/components/ui/menubar';
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarTrigger
 } from '@/components/ui/sidebar';
+
+import { NavUser } from './nav-user';
+import ForwardedSideBarLink from './sidebar-link';
 
 const artistMenu = [
   {
@@ -49,14 +44,17 @@ const adminMenu = [
   }
 ];
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const user = await currentUser();
+  if (!user) return null;
+  const email =
+    user.primaryEmailAddress?.emailAddress ?? user.primaryEmailAddress ?? '';
+
   return (
-    <Sidebar>
-      <SidebarHeader>
-        <SidebarTrigger />
-      </SidebarHeader>
+    <Sidebar collapsible="icon" className="min-h-screen">
       <SidebarContent>
         <IsArtistOrAdmin>
+          <SidebarTrigger />
           <SidebarGroup>
             <SidebarGroupContent>
               <SidebarMenu>
@@ -94,64 +92,14 @@ export function AppSidebar() {
         </IsAdmin>
       </SidebarContent>
       <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <Menubar>
-              <MenubarMenu>
-                <MenubarTrigger>Mon compte</MenubarTrigger>
-                <MenubarContent>
-                  <MenubarItem>
-                    <Link
-                      href="/dashboard/my-account/profile"
-                      legacyBehavior
-                      passHref
-                    >
-                      <ForwardedSideBarLink
-                        libelle="Mon profile"
-                        icon={<User2 />}
-                      />
-                    </Link>
-                  </MenubarItem>
-                  <MenubarItem>
-                    <Link
-                      href="/dashboard/my-account/account"
-                      legacyBehavior
-                      passHref
-                    >
-                      <ForwardedSideBarLink
-                        libelle="Mon compte"
-                        icon={<UserCircle2 />}
-                      />
-                    </Link>
-                  </MenubarItem>
-                </MenubarContent>
-              </MenubarMenu>
-            </Menubar>
-          </SidebarMenuItem>
-        </SidebarMenu>
+        <NavUser
+          user={{
+            id: user.id,
+            email: email as string,
+            name: user.fullName ?? ''
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   );
 }
-
-interface SideBarLinkProps {
-  libelle: string;
-  icon: React.ReactNode;
-}
-
-// Use React.ForwardRefRenderFunction to properly type the forwarded ref
-const SideBarLink: React.ForwardRefRenderFunction<
-  HTMLAnchorElement,
-  SideBarLinkProps
-> = ({ libelle, icon }, ref) => {
-  return (
-    <SidebarMenuButton asChild>
-      <a ref={ref}>
-        {icon}
-        <span>{libelle}</span>
-      </a>
-    </SidebarMenuButton>
-  );
-};
-
-const ForwardedSideBarLink = React.forwardRef(SideBarLink);

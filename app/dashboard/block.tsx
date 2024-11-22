@@ -3,11 +3,14 @@
 import { Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { getArts } from '@/server/db/art';
 import { getUsers } from '@/server/db/users';
 
 type BlockProps = {
   libelle: string;
-  list: Awaited<ReturnType<typeof getUsers>>;
+  list:
+    | Awaited<ReturnType<typeof getUsers>>
+    | Awaited<ReturnType<typeof getArts>>;
 };
 
 export default function Block({ libelle, list }: BlockProps) {
