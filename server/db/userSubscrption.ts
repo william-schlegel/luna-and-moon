@@ -2,7 +2,7 @@ import { SQL } from 'drizzle-orm';
 
 import { subscriptionTiers } from '@/data/subscriptionTiers';
 import { db } from '@/drizzle/db';
-import { NewUser, user } from '@/drizzle/schema';
+import { NewUser, UserTable } from '@/drizzle/schema';
 import {
   CACHE_TAGS,
   dbCache,
@@ -12,14 +12,14 @@ import {
 
 export async function createUserSubscription(data: NewUser) {
   const [newSubscription] = await db
-    .insert(user)
+    .insert(UserTable)
     .values(data)
     .onConflictDoNothing({
-      target: user.clerkId
+      target: UserTable.clerkId
     })
     .returning({
-      id: user.id,
-      userId: user.clerkId
+      id: UserTable.id,
+      userId: UserTable.clerkId
     });
 
   if (newSubscription != null) {
@@ -43,15 +43,15 @@ export function getUserSubscription(userId: string) {
 
 export async function updateUserSubscription(
   where: SQL,
-  data: Partial<typeof user.$inferInsert>
+  data: Partial<typeof UserTable.$inferInsert>
 ) {
   const [updatedSubscription] = await db
-    .update(user)
+    .update(UserTable)
     .set(data)
     .where(where)
     .returning({
-      id: user.id,
-      userId: user.clerkId
+      id: UserTable.id,
+      userId: UserTable.clerkId
     });
 
   if (updatedSubscription != null) {

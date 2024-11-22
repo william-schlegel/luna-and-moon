@@ -3,15 +3,16 @@ import { ClerkProvider } from '@clerk/nextjs';
 import Header from '@/components/header';
 import { IsArtistOrAdmin } from '@/components/role';
 import { SidebarProvider } from '@/components/ui/sidebar';
+import { Toaster } from '@/components/ui/toaster';
 
 import { AppSidebar } from './dashboard/my-account/(sidebar)/app-sidebar';
 import './globals.css';
 
 export default function RootLayout({
   children
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <ClerkProvider>
       <html lang="en">
@@ -25,6 +26,7 @@ export default function RootLayout({
               <div className="w-full">{children}</div>
             </div>
           </SidebarProvider>
+          <Toaster />
         </body>
       </html>
     </ClerkProvider>

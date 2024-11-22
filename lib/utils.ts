@@ -22,3 +22,7 @@ const moneytNumberFormatter = new Intl.NumberFormat('fr-fr', {
 export function formatMoneytNumber(number: number) {
   return moneytNumberFormatter.format(number);
 }
+
+export function removeTrailingSlash(path: string) {
+  return path.replace(/\/$/, '');
+}

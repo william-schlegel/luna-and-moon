@@ -1,6 +1,7 @@
 // import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  index,
   pgEnum,
   pgTable,
   real,
@@ -16,7 +17,7 @@ export const TierEnum = pgEnum(
   Object.keys(subscriptionTiers) as [TierNames]
 );
 
-export const user = pgTable('user', {
+export const UserTable = pgTable('user', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name'),
   clerkId: text('clerkId').notNull().unique(),
@@ -30,40 +31,51 @@ export const user = pgTable('user', {
   tier: TierEnum('tier').notNull()
 });
 
-export const artCategory = pgTable('art_category', {
+export const ArtCategoryTable = pgTable('art_category', {
   id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
   description: text('description').notNull()
 });
 
-export const material = pgTable('material', {
+export const MaterialTable = pgTable('material', {
   id: uuid('id').primaryKey(),
   name: text('name').notNull(),
   description: text('description').notNull()
 });
 
-export const art = pgTable('art', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => user.id),
-  artCategoryId: uuid('art_category_id')
-    .references(() => artCategory.id)
-    .unique(),
-  name: text('name').notNull(),
-  description: text('description').notNull(),
-  imageId: text('image_id'),
-  onSale: boolean('on_sale').notNull().default(true),
-  originalPrice: real('original_price').notNull().default(0),
-  price: real('price').notNull().default(0),
-  available: boolean('available').notNull().default(true),
-  width: real('width').notNull().default(0),
-  height: real('height').notNull().default(0),
-  depth: real('depth').default(0),
-  materialId: uuid('material_id').references(() => material.id),
-  material: text('material'),
-  weight: real('weight').default(0),
-  creationDate: timestamp('creation_date').notNull(),
-  onSaleSince: timestamp('on_sale_since')
-});
+export const ArtTable = pgTable(
+  'art',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    clerkUserId: text('clerk_user_id').notNull(),
+    artCategoryId: uuid('art_category_id')
+      .references(() => ArtCategoryTable.id)
+      .unique(),
+    name: text('name').notNull(),
+    description: text('description'),
+    imageId: text('image_id'),
+    onSale: boolean('on_sale').default(true),
+    originalPrice: real('original_price').default(0),
+    price: real('price').default(0),
+    available: boolean('available').notNull().default(true),
+    width: real('width').default(0),
+    height: real('height').default(0),
+    depth: real('depth').default(0),
+    materialId: uuid('material_id').references(() => MaterialTable.id),
+    material: text('material'),
+    weight: real('weight').default(0),
+    creationDate: timestamp('creation_date').default(new Date()),
+    onSaleSince: timestamp('on_sale_since')
+  },
+  (table) => ({
+    clerkUserIdIndex: index('user_art.clerk_user_id_index').on(
+      table.clerkUserId
+    )
+    // stripeCustomerIdIndex: index(
+    //   "user_subscriptions.stripe_customer_id_index"
+    // ).on(table.stripeCustomerId),
+  })
+);
 
 /**
  * RELATIONSHIPS
@@ -96,14 +108,14 @@ export const art = pgTable('art', {
  * in a component or function.
  */
 
-export type User = typeof user.$inferSelect;
-export type NewUser = typeof user.$inferInsert;
+export type User = typeof UserTable.$inferSelect;
+export type NewUser = typeof UserTable.$inferInsert;
 
-export type ArtCategory = typeof artCategory.$inferSelect;
-export type NewArtCategory = typeof artCategory.$inferInsert;
+export type ArtCategory = typeof ArtCategoryTable.$inferSelect;
+export type NewArtCategory = typeof ArtCategoryTable.$inferInsert;
 
-export type Art = typeof art.$inferSelect;
-export type NewArt = typeof art.$inferInsert;
+export type Art = typeof ArtTable.$inferSelect;
+export type NewArt = typeof ArtTable.$inferInsert;
 
-export type Material = typeof material.$inferSelect;
-export type NewMaterial = typeof material.$inferInsert;
+export type Material = typeof MaterialTable.$inferSelect;
+export type NewMaterial = typeof MaterialTable.$inferInsert;
