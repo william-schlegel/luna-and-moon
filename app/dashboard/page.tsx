@@ -18,11 +18,11 @@ export default async function Page() {
 
   return (
     <div className="p-4">
-      <div className="grid grid-cols-1 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <IsAdmin>
           <Block libelle="artistes" list={artists} />
         </IsAdmin>
-        <Block libelle="oeuvres" list={arts} />
+        <Block libelle="oeuvres" list={arts} urlPlus="/dashboard/art/new" />
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { getArts } from '@/server/db/art';
@@ -11,16 +12,24 @@ type BlockProps = {
   list:
     | Awaited<ReturnType<typeof getUsers>>
     | Awaited<ReturnType<typeof getArts>>;
+  urlPlus?: string;
 };
 
-export default function Block({ libelle, list }: BlockProps) {
+export default function Block({
+  libelle,
+  list,
+  urlPlus
+}: Readonly<BlockProps>) {
+  const { push } = useRouter();
   return (
     <div className="rounded-lg bg-gray-100 p-4">
       <h2 className="flex items-center justify-between">
         {libelle}
-        <Button variant="outline">
-          <Plus />
-        </Button>
+        {urlPlus ? (
+          <Button variant="outline" onClick={() => push(urlPlus)}>
+            <Plus />
+          </Button>
+        ) : null}
       </h2>
       <ul>
         {list.map((item) => (

@@ -18,7 +18,6 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-// import { createProduct, updateProduct } from "@/server/actions/products"
 import { useToast } from '@/hooks/use-toast';
 import { createArtAction, updateArtAction } from '@/server/actions/art';
 

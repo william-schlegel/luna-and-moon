@@ -72,7 +72,7 @@ export async function getUserSubscriptionTier(userId: string) {
 }
 
 async function getUserSubscriptionInternal(userId: string) {
-  const data = await db.query.user.findFirst({
+  const data = await db.query.UserTable.findFirst({
     where: ({ clerkId }, { eq }) => eq(clerkId, userId)
   });
   return data;

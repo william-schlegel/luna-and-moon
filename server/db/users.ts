@@ -11,7 +11,7 @@ export function getUsers(tier?: TierNames | TierNames[]) {
 }
 
 async function getUsersInternal(tier?: TierNames | TierNames[]) {
-  const data = await db.query.user.findMany({
+  const data = await db.query.UserTable.findMany({
     where: tier
       ? ({ tier }, { eq, or }) =>
           Array.isArray(tier)
@@ -36,7 +36,7 @@ export async function getUser(userId: string) {
   return cacheFn();
 }
 async function getUserInternal(userId: string) {
-  const data = await db.query.user.findFirst({
+  const data = await db.query.UserTable.findFirst({
     where: ({ clerkId }, { eq }) => eq(clerkId, userId)
   });
   return data;
