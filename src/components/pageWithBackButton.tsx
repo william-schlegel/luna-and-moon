@@ -16,7 +16,7 @@ export function PageWithBackButton({
   children
 }: PageWithBackButtonProps) {
   return (
-    <div className="grid grid-cols-[auto,1fr] gap-x-4 gap-y-8">
+    <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-8">
       <Button size="icon" variant="outline" className="rounded-full" asChild>
         <Link href={backButtonHref}>
           <div className="sr-only">Back</div>

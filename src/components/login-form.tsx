@@ -85,7 +85,7 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
         {'en cous connectant, vous agréez à nos '}
         <Link href="terms-of-service">{"Conditions d'utilisation"}</Link>{' '}
         {' et '}

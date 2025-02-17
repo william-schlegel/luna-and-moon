@@ -68,7 +68,7 @@ function Header() {
         </NavigationMenuList>
       </NavigationMenu>
       <SignedOut>
-        <Button asChild variant="outline">
+        <Button variant="outline">
           <SignInButton />
         </Button>
       </SignedOut>
