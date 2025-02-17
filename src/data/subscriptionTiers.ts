@@ -1,6 +1,19 @@
 // import { env } from "./env/server"
 
-export type TierNames = keyof typeof subscriptionTiers;
+export type SubscriptionTier = {
+  name: string;
+  priceInCents: number;
+  maxNumberOfArt: number;
+  needAcknowledge: boolean;
+  stripePriceId: string;
+};
+export const tierNames = [
+  'Free',
+  'ArtistFree',
+  'Artist',
+  'AdvancedArtist'
+] as const;
+export type TierNames = (typeof tierNames)[number];
 export type PaidTierNames = Exclude<TierNames, 'Free' | 'ArtistFree'>;
 
 export const subscriptionTiers = {
@@ -32,7 +45,7 @@ export const subscriptionTiers = {
     needAcknowledge: false,
     stripePriceId: '' // env.STRIPE_FREE_PLAN_STRIPE_PRICE_ID,
   }
-} as const;
+} as const satisfies Record<TierNames, SubscriptionTier>;
 
 export const subscriptionTiersInOrder = [
   subscriptionTiers.Free,
