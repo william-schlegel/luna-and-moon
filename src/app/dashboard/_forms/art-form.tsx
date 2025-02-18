@@ -18,10 +18,9 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { ArtSchemaType, artSchema } from '@/form-schemas/art';
 import { useToast } from '@/hooks/use-toast';
 import { createArtAction, updateArtAction } from '@/server/actions/art';
-
-import { ArtSchemaType, artSchema } from '../../../form-schemas/art';
 
 type ArtDetailsFormProps = {
   art?: {

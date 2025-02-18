@@ -18,7 +18,51 @@ export const auth = betterAuth({
   socialProviders: {
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.given_name,
+          lastName: profile.family_name,
+          name: `${profile.given_name} ${profile.family_name}`
+        };
+      }
+    },
+    apple: {
+      clientId: env.APPLE_CLIENT_ID,
+      clientSecret: env.APPLE_CLIENT_SECRET,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.name.split(' ')[0],
+          lastName: profile.name.split(' ')[1],
+          name: profile.name
+        };
+      }
+    },
+    facebook: {
+      clientId: env.FACEBOOK_CLIENT_ID,
+      clientSecret: env.FACEBOOK_CLIENT_SECRET,
+      mapProfileToUser: (profile) => {
+        return {
+          firstName: profile.name.split(' ')[0],
+          lastName: profile.name.split(' ')[1],
+          name: profile.name
+        };
+      }
+    }
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: 'string',
+        required: true,
+        defaultValue: 'user',
+        input: false // don't allow user to set role
+      },
+      tier: {
+        type: 'string',
+        required: true,
+        defaultValue: 'Free'
+      }
     }
   },
   plugins: [admin()]

@@ -26,6 +26,8 @@ export const TierEnum = pgEnum(
 export const UserTable = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
+  firstName: text('firstName').notNull(),
+  lastName: text('lastName').notNull(),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').notNull(),
   image: text('image'),

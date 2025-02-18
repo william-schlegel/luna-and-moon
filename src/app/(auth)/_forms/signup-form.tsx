@@ -1,9 +1,11 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
+import PricingCard from '@/components/pricingCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,14 +18,13 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { subscriptionTiersInOrder } from '@/data/subscriptionTiers';
+import { subscriptionTiersInOrder, TierNames } from '@/data/subscriptionTiers';
 import { SignupSchemaType, signupSchema } from '@/form-schemas/signup';
-
-import PricingCard from './pricingCard';
-import { cn } from '@/lib/utils';
+import { signUp } from '@/server/actions/auth';
 
 export default function SignUpForm() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(signupSchema),
@@ -36,12 +37,13 @@ export default function SignUpForm() {
     }
   });
 
-  const onSubmit = (data: SignupSchemaType) => {
-    console.log({ ...data, profileImage });
+  const onSubmit = async (data: SignupSchemaType) => {
+    await signUp(data.email, data.password, data.lastName, data.plan);
+    setIsSubmitting(false);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleImageUpload = (e: React.ChangeEvent) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -127,7 +129,11 @@ export default function SignUpForm() {
                   <FormItem>
                     <FormLabel>Mot de passe</FormLabel>
                     <FormControl>
-                      <Input placeholder="motde passe" type="password" {...field} />
+                      <Input
+                        placeholder="motde passe"
+                        type="password"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -138,21 +144,20 @@ export default function SignUpForm() {
             <div className="space-y-4">
               <FormLabel>Choisissez votre plan</FormLabel>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {subscriptionTiersInOrder.map((tier) => (
+                {Object.entries(subscriptionTiersInOrder).map((tier) => (
                   <button
-                    key={tier.name}
-                    className={cn("cursor-pointer", 
-                      plan === tier.name && ""
-                )}
-                    onClick={() => form.setValue('plan', tier.name)}
+                    key={tier[0]}
+                    type="button"
+                    onClick={() => form.setValue('plan', tier[0] as TierNames)}
                   >
-                    <PricingCard {...tier} />
+                    <PricingCard {...tier[1]} selected={plan === tier[0]} />
                   </button>
                 ))}
               </div>
             </div>
 
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isSubmitting}>
+              {isSubmitting && <Loader2 className="animate-spin" />}
               {"S'inscrire"}
             </Button>
           </form>

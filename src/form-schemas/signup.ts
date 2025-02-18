@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { tierNames } from '@/data/subscriptionTiers';
 
 export const signupSchema = z.object({
   email: z.string().email('Email invalide'),
@@ -11,8 +12,7 @@ export const signupSchema = z.object({
   confirmPassword: z
     .string()
     .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  plan: z.string()
-  
+  plan: z.enum(tierNames)
 });
 
 export type SignupSchemaType = z.infer<typeof signupSchema>;

@@ -13,27 +13,33 @@ import {
   CardTitle
 } from './ui/card';
 
+type PricingCardProps = (typeof subscriptionTiersInOrder)[number] & {
+  selected?: boolean;
+};
+
 export default function PricingCard({
   name,
   priceInCents,
-  maxNumberOfArt
-}: (typeof subscriptionTiersInOrder)[number]) {
+  maxNumberOfArt,
+  selected
+}: PricingCardProps) {
   const isMostPopular = name === 'Artiste';
 
   return (
     <Card
       className={cn(
         'relative overflow-hidden rounded-3xl shadow-none',
-        isMostPopular ? 'border-2 border-accent' : 'border-none'
+        isMostPopular ? 'border-accent border-2' : 'border-primary border',
+        selected && 'bg-accent/10 border-4'
       )}
     >
       {isMostPopular && (
-        <div className="absolute -right-8 top-24 origin-top-right rotate-45 bg-accent px-10 py-1 text-accent-foreground">
+        <div className="bg-accent text-accent-foreground absolute top-24 -right-8 origin-top-right rotate-45 px-10 py-1">
           Plus populaire
         </div>
       )}
       <CardHeader>
-        <div className="mb-8 font-semibold text-accent">{name}</div>
+        <div className="text-accent mb-8 font-semibold">{name}</div>
         <CardTitle className="text-xl font-bold">
           {formatMoneytNumber(priceInCents / 100)} /mo
         </CardTitle>
@@ -42,14 +48,13 @@ export default function PricingCard({
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* <SignUpButton>
-          <Button
-            className="w-full rounded-lg text-lg"
-            variant={isMostPopular ? 'destructive' : 'default'}
-          >
-            Démarrer
-          </Button>
-        </SignUpButton> */}
+        <Button
+          type="button"
+          className="w-full rounded-lg text-lg"
+          variant={isMostPopular ? 'destructive' : 'default'}
+        >
+          Sélectionner
+        </Button>
       </CardContent>
       <CardFooter className="flex flex-col items-start gap-4">
         <Feature className="font-bold">
@@ -70,7 +75,7 @@ function Feature({
 }) {
   return (
     <div className={cn('flex items-center gap-2', className)}>
-      <CheckIcon className="size-4 rounded-full bg-accent/25 stroke-accent p-0.5" />
+      <CheckIcon className="bg-accent/25 stroke-accent size-4 rounded-full p-0.5" />
       <span>{children}</span>
     </div>
   );

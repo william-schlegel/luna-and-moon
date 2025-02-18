@@ -6,7 +6,8 @@ import { z } from 'zod';
 import { artSchema } from '@/form-schemas/art';
 import { getActualUserId } from '@/lib/auth';
 import {
-  createArt as createArtDb, // deleteProduct as deleteProductDb,
+  createArt as createArtDb,
+  // deleteProduct as deleteProductDb,
   updateArt as updateArtDb // updateCountryDiscounts as updateCountryDiscountsDb,
   // updateProductCustomization as updateProductCustomizationDb,
 } from '@/server/db/art';

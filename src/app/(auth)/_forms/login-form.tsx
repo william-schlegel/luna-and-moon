@@ -31,21 +31,20 @@ export function LoginForm({
             <div className="grid gap-6">
               <div className="flex flex-col gap-4">
                 <Button variant="outline" className="w-full">
-                  <img
-                    src="/svg/facebook.svg"
-                    alt="Apple"
-                    className="h-4 w-4"
-                  />
+                  <img src="/svg/facebook.svg" alt="Apple" className="size-4" />
                   {'Se connecter avec Facebook'}
                 </Button>
                 <Button variant="outline" className="w-full">
-                  <img src="/svg/google.svg" alt="Apple" className="h-4 w-4" />
-
+                  <img src="/svg/apple.svg" alt="Apple" className="size-4" />
+                  {'Se connecter avec Apple'}
+                </Button>
+                <Button variant="outline" className="w-full">
+                  <img src="/svg/google.svg" alt="Google" className="size-4" />
                   {'Se connecter avec Google'}
                 </Button>
               </div>
-              <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                <span className="relative z-10 bg-background px-2 text-muted-foreground">
+              <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                <span className="bg-background text-muted-foreground relative z-10 px-2">
                   {'Ou continuer avec'}
                 </span>
               </div>
@@ -85,7 +84,7 @@ export function LoginForm({
           </form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 hover:[&_a]:text-primary">
+      <div className="text-muted-foreground hover:[&_a]:text-primary text-center text-xs text-balance [&_a]:underline [&_a]:underline-offset-4">
         {'en cous connectant, vous agréez à nos '}
         <Link href="terms-of-service">{"Conditions d'utilisation"}</Link>{' '}
         {' et '}
