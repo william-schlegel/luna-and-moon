@@ -48,10 +48,10 @@ export const subscriptionTiers = {
 } as const satisfies Record<TierNames, SubscriptionTier>;
 
 export const subscriptionTiersInOrder = [
-  subscriptionTiers.Free,
-  subscriptionTiers.ArtistFree,
-  subscriptionTiers.Artist,
-  subscriptionTiers.AdvancedArtist
+  { id: 'Free', ...subscriptionTiers.Free },
+  { id: 'ArtistFree', ...subscriptionTiers.ArtistFree },
+  { id: 'Artist', ...subscriptionTiers.Artist },
+  { id: 'AdvancedArtist', ...subscriptionTiers.AdvancedArtist }
 ] as const;
 
 export function getTierByPriceId(stripePriceId: string) {

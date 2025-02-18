@@ -1,4 +1,4 @@
-import { AwaitedReactNode } from 'react';
+import { ReactNode } from 'react';
 
 import { getActualUserId } from '@/lib/auth';
 
@@ -8,7 +8,7 @@ type HasPermissionProps = {
   permission: (userId: string | null) => Promise<boolean>;
   renderFallback?: boolean;
   fallbackText?: string;
-  children: AwaitedReactNode;
+  children: ReactNode;
 };
 
 export async function HasPermission({

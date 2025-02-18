@@ -18,7 +18,7 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { subscriptionTiersInOrder, TierNames } from '@/data/subscriptionTiers';
+import { subscriptionTiersInOrder } from '@/data/subscriptionTiers';
 import { SignupSchemaType, signupSchema } from '@/form-schemas/signup';
 import { signUp } from '@/server/actions/auth';
 
@@ -54,6 +54,8 @@ export default function SignUpForm() {
   };
 
   const plan = form.watch('plan');
+
+  console.log('form.errors :>> ', form.formState.errors);
 
   return (
     <Card className="mx-auto w-full max-w-4xl">
@@ -144,14 +146,13 @@ export default function SignUpForm() {
             <div className="space-y-4">
               <FormLabel>Choisissez votre plan</FormLabel>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {Object.entries(subscriptionTiersInOrder).map((tier) => (
-                  <button
-                    key={tier[0]}
-                    type="button"
-                    onClick={() => form.setValue('plan', tier[0] as TierNames)}
-                  >
-                    <PricingCard {...tier[1]} selected={plan === tier[0]} />
-                  </button>
+                {subscriptionTiersInOrder.map((tier) => (
+                  <PricingCard
+                    key={tier.id}
+                    onClick={() => form.setValue('plan', tier.id)}
+                    {...tier}
+                    selected={plan === tier.id}
+                  />
                 ))}
               </div>
             </div>

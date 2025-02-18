@@ -23,7 +23,7 @@ export const TierEnum = pgEnum(
   Object.keys(subscriptionTiers) as [TierNames]
 );
 
-export const UserTable = pgTable('user', {
+export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   firstName: text('firstName').notNull(),
@@ -57,7 +57,7 @@ export const session = pgTable('session', {
   userAgent: text('user_agent'),
   userId: text('user_id')
     .notNull()
-    .references(() => UserTable.id, { onDelete: 'cascade' }),
+    .references(() => user.id, { onDelete: 'cascade' }),
   impersonatedBy: text('impersonated_by')
 });
 
@@ -67,7 +67,7 @@ export const account = pgTable('account', {
   providerId: text('provider_id').notNull(),
   userId: text('user_id')
     .notNull()
-    .references(() => UserTable.id, { onDelete: 'cascade' }),
+    .references(() => user.id, { onDelete: 'cascade' }),
   accessToken: text('access_token'),
   refreshToken: text('refresh_token'),
   idToken: text('id_token'),
@@ -127,7 +127,8 @@ export const ArtTable = pgTable(
     materialId: uuid('material_id').references(() => MaterialTable.id),
     material: text('material'),
     weight: real('weight').default(0),
-    creationDate: timestamp('creation_date').default(new Date()),
+    createdAt: timestamp('created_at'),
+    updatedAt: timestamp('updated_at'),
     onSaleSince: timestamp('on_sale_since')
   },
   (table) => [
@@ -169,8 +170,8 @@ export const ArtTable = pgTable(
  * in a component or function.
  */
 
-export type User = typeof UserTable.$inferSelect;
-export type NewUser = typeof UserTable.$inferInsert;
+export type User = typeof user.$inferSelect;
+export type NewUser = typeof user.$inferInsert;
 
 export type ArtCategory = typeof ArtCategoryTable.$inferSelect;
 export type NewArtCategory = typeof ArtCategoryTable.$inferInsert;

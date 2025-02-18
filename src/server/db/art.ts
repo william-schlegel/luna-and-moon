@@ -22,12 +22,12 @@ export function getArts(userId?: string) {
 async function getArtsInternal(userId?: string) {
   const data = await db.query.ArtTable.findMany({
     where: userId ? ({ userId }, { eq }) => eq(userId, userId) : undefined,
-    orderBy: ({ creationDate }, { desc }) => desc(creationDate)
+    orderBy: ({ createdAt }, { desc }) => desc(createdAt)
   });
   return data.map((art) => ({
     id: art.id,
     name: art.name,
-    creationDate: art.creationDate,
+    createdAt: art.createdAt,
     image: art.imageId
   }));
 }

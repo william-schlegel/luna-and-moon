@@ -9,18 +9,18 @@ import {
 } from '@/lib/cache';
 
 import { db } from '../../../db/db';
-import { NewUser, UserTable } from '../../../db/schema';
+import { NewUser, user } from '../../../db/schema';
 
 export async function createUserSubscription(data: NewUser) {
   const [newSubscription] = await db
-    .insert(UserTable)
+    .insert(user)
     .values(data)
     .onConflictDoNothing({
-      target: UserTable.id
+      target: user.id
     })
     .returning({
-      id: UserTable.id,
-      userId: UserTable.id
+      id: user.id,
+      userId: user.id
     });
 
   if (newSubscription != null) {
@@ -44,15 +44,15 @@ export function getUserSubscription(userId: string) {
 
 export async function updateUserSubscription(
   where: SQL,
-  data: Partial<typeof UserTable.$inferInsert>
+  data: Partial<typeof user.$inferInsert>
 ) {
   const [updatedSubscription] = await db
-    .update(UserTable)
+    .update(user)
     .set(data)
     .where(where)
     .returning({
-      id: UserTable.id,
-      userId: UserTable.id
+      id: user.id,
+      userId: user.id
     });
 
   if (updatedSubscription != null) {
@@ -73,7 +73,7 @@ export async function getUserSubscriptionTier(userId: string) {
 }
 
 async function getUserSubscriptionInternal(userId: string) {
-  const data = await db.query.UserTable.findFirst({
+  const data = await db.query.user.findFirst({
     where: ({ id }, { eq }) => eq(id, userId)
   });
   return data;
