@@ -2,6 +2,10 @@
 import { revalidateTag, unstable_cache } from 'next/cache';
 import { cache } from 'react';
 
+import { env } from '@/data/env/server';
+
+const NO_CACHE = env.NO_CACHE === 'true';
+
 export type ValidTags =
   | ReturnType<typeof getGlobalTag>
   | ReturnType<typeof getUserTag>
@@ -36,6 +40,7 @@ export function dbCache<T extends (...args: any[]) => Promise<any>>(
   cb: Parameters<typeof unstable_cache<T>>[0],
   { tags }: { tags: ValidTags[] }
 ) {
+  if (NO_CACHE) return cb;
   return cache(unstable_cache<T>(cb, undefined, { tags: [...tags, '*'] }));
 }
 

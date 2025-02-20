@@ -1,6 +1,5 @@
 import { getTierByName } from '@/data/subscriptionTiers';
 import { getActualUser, getActualUserId } from '@/lib/auth';
-import { getSession } from '@/lib/auth-client';
 import { getUserSubscription } from '@/server/db/userSubscrption';
 
 import { Badge } from './ui/badge';
@@ -13,11 +12,11 @@ export const OrgMembersParams = {
 };
 
 export default async function Role() {
-  const { data } = await getSession();
-  if (!data) return null;
-  const userId = data.user.id;
+  const user = await getActualUser();
+  if (!user) return null;
+  const userId = user.id;
 
-  const role = data.user.role ?? 'user';
+  const role = user.role ?? 'user';
   const isAdmin = role === 'admin';
   const subscription = await getUserSubscription(userId);
 
@@ -60,11 +59,17 @@ export async function IsArtistOrAdmin({
   const hasAdminRole = await isAdmin();
   const hasArtistSubscription = await isArtist();
 
+  console.log('{hasAdminRole, hasArtistSubscription} :>> ', {
+    hasAdminRole,
+    hasArtistSubscription
+  });
+
   return hasArtistSubscription || hasAdminRole ? <>{children}</> : null;
 }
 
 export async function isAdmin() {
   const user = await getActualUser();
+  console.log('user :>> ', user);
   const role = user?.role ?? 'user';
   const isAdmin = role === 'admin';
   return isAdmin;
@@ -72,6 +77,8 @@ export async function isAdmin() {
 
 export async function isArtist() {
   const user = await getActualUser();
+  console.log('user :>> ', user);
+
   if (!user) return false;
   const subscriptionTier = user.tier;
   const isArtist =
