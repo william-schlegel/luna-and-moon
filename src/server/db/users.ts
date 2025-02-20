@@ -1,7 +1,10 @@
+import { desc, eq } from 'drizzle-orm';
+
 import { TierNames } from '@/data/subscriptionTiers';
 import { CACHE_TAGS, dbCache, getGlobalTag, getIdTag } from '@/lib/cache';
 
 import { db } from '../../../db/db';
+import { ArtTable, user } from '../../../db/schema';
 
 export function getUsers(tier?: TierNames | TierNames[]) {
   const cacheFn = dbCache(() => getUsersInternal(tier), {
@@ -50,6 +53,24 @@ async function getUserInternal(userId: string) {
     image: data.image,
     email: data.email
   };
+}
+
+export async function getArtistsWithArts() {
+  const cacheFn = dbCache(() => getArtistsWithArtsInternal(), {
+    tags: [getGlobalTag(CACHE_TAGS.user), getGlobalTag(CACHE_TAGS.arts)]
+  });
+
+  return cacheFn();
+}
+async function getArtistsWithArtsInternal() {
+  const data = await db
+    .select({ id: user.id, name: user.name })
+    .from(user)
+    .innerJoin(ArtTable, eq(ArtTable.userId, user.id))
+    .orderBy(desc(ArtTable.createdAt));
+  console.log('getArtistsWithArts :>> ', data);
+  if (!data) return null;
+  return data;
 }
 
 // export function getProductCustomization({
