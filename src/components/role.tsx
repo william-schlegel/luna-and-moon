@@ -58,18 +58,11 @@ export async function IsArtistOrAdmin({
 }) {
   const hasAdminRole = await isAdmin();
   const hasArtistSubscription = await isArtist();
-
-  console.log('{hasAdminRole, hasArtistSubscription} :>> ', {
-    hasAdminRole,
-    hasArtistSubscription
-  });
-
   return hasArtistSubscription || hasAdminRole ? <>{children}</> : null;
 }
 
 export async function isAdmin() {
   const user = await getActualUser();
-  console.log('user :>> ', user);
   const role = user?.role ?? 'user';
   const isAdmin = role === 'admin';
   return isAdmin;
@@ -77,8 +70,6 @@ export async function isAdmin() {
 
 export async function isArtist() {
   const user = await getActualUser();
-  console.log('user :>> ', user);
-
   if (!user) return false;
   const subscriptionTier = user.tier;
   const isArtist =

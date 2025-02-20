@@ -4,6 +4,7 @@ import {
   CACHE_TAGS,
   dbCache,
   getGlobalTag,
+  getIdTag,
   getUserTag,
   revalidateDbCache
 } from '@/lib/cache';
@@ -30,6 +31,35 @@ async function getArtsInternal(userId?: string) {
     createdAt: art.createdAt,
     image: art.imageId
   }));
+}
+// Ajouter après les imports existants
+
+export function getArtById(id: string) {
+  const cacheFn = dbCache(() => getArtByIdInternal(id), {
+    tags: [getIdTag(id, CACHE_TAGS.arts)]
+  });
+
+  return cacheFn();
+}
+
+async function getArtByIdInternal(id: string) {
+  const art = await db.query.ArtTable.findFirst({
+    where: ({ id: artId }, { eq }) => eq(artId, id)
+  });
+
+  if (!art) {
+    return null;
+  }
+
+  return {
+    id: art.id,
+    name: art.name,
+    description: art.description,
+    imageUrl: art.imageId, // Assurez-vous d'adapter selon votre schéma
+    available: art.available,
+    createdAt: art.createdAt,
+    userId: art.userId
+  };
 }
 
 export async function createArt(data: NewArt) {

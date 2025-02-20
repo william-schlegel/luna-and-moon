@@ -21,7 +21,7 @@ import ForwardedSideBarLink from './sidebar-link';
 const artistMenu = [
   {
     title: 'Oeuvres',
-    url: '/dashboard/artistes',
+    url: '/dashboard/arts',
     icon: Stars
   }
 ];

@@ -5,7 +5,7 @@ import { canCreateArt } from '@/server/permissions';
 
 import { ArtDetailsForm } from '../../_forms/art-form';
 
-export default function NewProductPage() {
+export default function NewArtPage() {
   return (
     <PageWithBackButton
       pageTitle="Create Product"

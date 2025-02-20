@@ -1,12 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Checkbox } from '@radix-ui/react-checkbox';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { RequiredLabelIcon } from '@/components/requiredLabelIcon';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -39,7 +39,8 @@ export const ArtDetailsForm: FC<ArtDetailsFormProps> = ({ art }) => {
       ? { ...art, description: art.description ?? '' }
       : {
           name: '',
-          description: ''
+          description: '',
+          available: true
         }
   });
 
@@ -63,15 +64,15 @@ export const ArtDetailsForm: FC<ArtDetailsFormProps> = ({ art }) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="grid grid-cols-1 gap-6 lg:grid-cols-2"
       >
-        <div>image</div>
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div>{"Image de l'oeuvre"}</div>
+        <div className="@container grid grid-cols-1 gap-6 @xl:grid-cols-2">
           <FormField
             control={form.control}
             name="name"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Product Name
+                  {"Nom de l'oeuvre"}
                   <RequiredLabelIcon />
                 </FormLabel>
                 <FormControl>
@@ -85,19 +86,19 @@ export const ArtDetailsForm: FC<ArtDetailsFormProps> = ({ art }) => {
             control={form.control}
             name="available"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>
-                  A vendre
-                  <RequiredLabelIcon />
-                </FormLabel>
+              <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormDescription>Cette oeuvre est à vendre</FormDescription>
-                <FormMessage />
+                <div className="space-y-1 leading-none">
+                  <FormLabel>{'A vendre'}</FormLabel>
+                  <FormDescription>
+                    {'Cette oeuvre est à vendre'}
+                  </FormDescription>
+                </div>
               </FormItem>
             )}
           />
@@ -106,13 +107,12 @@ export const ArtDetailsForm: FC<ArtDetailsFormProps> = ({ art }) => {
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Product Description</FormLabel>
+                <FormLabel>{"Description de l'oeuvre"}</FormLabel>
                 <FormControl>
                   <Textarea className="min-h-20 resize-none" {...field} />
                 </FormControl>
                 <FormDescription>
-                  An optional description to help distinguish your product from
-                  other products
+                  {"Donne le plus de détails possibles sur l'oeuvre"}
                 </FormDescription>
                 <FormMessage />
               </FormItem>

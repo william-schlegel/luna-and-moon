@@ -20,7 +20,7 @@ export default function RootLayout({
           </IsArtistOrAdmin>
           <div className="grid w-full grid-rows-[auto_1fr]">
             <Header />
-            <div className="w-full">{children}</div>
+            <div className="mx-4">{children}</div>
           </div>
         </SidebarProvider>
         <Toaster />

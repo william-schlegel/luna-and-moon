@@ -6,7 +6,7 @@ import {
   SignedIn,
   SignedOut,
   UserButton
-} from '@/app/(auth)/signedIn';
+} from '@/app/(auth)/authComponents';
 import {
   NavigationMenu,
   NavigationMenuItem,

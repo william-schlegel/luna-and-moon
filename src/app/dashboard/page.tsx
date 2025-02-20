@@ -16,13 +16,20 @@ export default async function Page() {
   const admin = await isAdmin();
   const arts = await getArts(admin ? undefined : userId);
 
+  console.log('arts :>> ', arts);
+
   return (
     <div className="p-4">
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         <IsAdmin>
-          <Block libelle="artistes" list={artists} />
+          <Block libelle="artistes" list={artists} urlItem="user" />
         </IsAdmin>
-        <Block libelle="oeuvres" list={arts} urlPlus="/dashboard/art/new" />
+        <Block
+          libelle="oeuvres"
+          list={arts}
+          urlPlus="/dashboard/art/new"
+          urlItem="art"
+        />
       </div>
     </div>
   );
