@@ -26,8 +26,8 @@ export const TierEnum = pgEnum(
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
-  firstName: text('firstName').notNull(),
-  lastName: text('lastName').notNull(),
+  firstName: text('firstName'),
+  lastName: text('lastName'),
   email: text('email').notNull().unique(),
   emailVerified: boolean('email_verified').notNull(),
   image: text('image'),
@@ -37,7 +37,6 @@ export const user = pgTable('user', {
   facebook: text('facebook'),
   instagram: text('instagram'),
   twitter: text('twitter'),
-  memberSince: timestamp('member_since').notNull(),
   tier: TierEnum('tier').notNull(),
   createdAt: timestamp('created_at').notNull(),
   updatedAt: timestamp('updated_at').notNull(),

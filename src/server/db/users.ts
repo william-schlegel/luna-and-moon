@@ -19,12 +19,12 @@ async function getUsersInternal(tier?: TierNames | TierNames[]) {
             ? or(...tier.map((t) => eq(tier, t)))
             : eq(tier, tier)
       : undefined,
-    orderBy: ({ memberSince }, { desc }) => desc(memberSince)
+    orderBy: ({ createdAt }, { desc }) => desc(createdAt)
   });
   return data.map((artist) => ({
     id: artist.id,
     name: artist.name,
-    memberSince: artist.memberSince,
+    createdAt: artist.createdAt,
     tier: artist.tier
   }));
 }
@@ -44,7 +44,7 @@ async function getUserInternal(userId: string) {
   return {
     id: data.id,
     name: data.name,
-    memberSince: data.memberSince,
+    createdAt: data.createdAt,
     tier: data.tier,
     role: data.role,
     image: data.image,

@@ -1,11 +1,12 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import PricingCard from '@/components/pricingCard';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,12 +20,13 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { subscriptionTiersInOrder } from '@/data/subscriptionTiers';
-import { SignupSchemaType, signupSchema } from '@/form-schemas/signup';
+import { SignupSchemaType, signupSchema } from '@/form-schemas/auth';
 import { signUp } from '@/server/actions/auth';
 
 export default function SignUpForm() {
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(signupSchema),
@@ -38,7 +40,14 @@ export default function SignUpForm() {
   });
 
   const onSubmit = async (data: SignupSchemaType) => {
-    await signUp(data.email, data.password, data.lastName, data.plan);
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      await signUp(data);
+    } catch (error) {
+      console.error('error :>> ', error);
+      setSubmitError(error as string);
+    }
     setIsSubmitting(false);
   };
 
@@ -54,8 +63,6 @@ export default function SignUpForm() {
   };
 
   const plan = form.watch('plan');
-
-  console.log('form.errors :>> ', form.formState.errors);
 
   return (
     <Card className="mx-auto w-full max-w-4xl">
@@ -161,6 +168,13 @@ export default function SignUpForm() {
               {isSubmitting && <Loader2 className="animate-spin" />}
               {"S'inscrire"}
             </Button>
+            {submitError ? (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Erreur</AlertTitle>
+                <AlertDescription>{submitError}</AlertDescription>
+              </Alert>
+            ) : null}
           </form>
         </Form>
       </CardContent>

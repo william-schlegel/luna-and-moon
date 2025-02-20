@@ -13,3 +13,12 @@ export const signupSchema = z.object({
 });
 
 export type SignupSchemaType = z.infer<typeof signupSchema>;
+
+export const signinSchema = z.object({
+  email: z.string().email('Email invalide'),
+  password: z
+    .string()
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+});
+
+export type SigninSchemaType = z.infer<typeof signinSchema>;

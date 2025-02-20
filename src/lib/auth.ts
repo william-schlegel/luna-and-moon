@@ -65,13 +65,33 @@ export const auth = betterAuth({
       }
     }
   },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          // Modify the user object before it is created
+          return {
+            data: {
+              ...user,
+              firstName: user.name.split(' ')[0],
+              lastName: user.name.split(' ')[1]
+            }
+          };
+        }
+      }
+    }
+  },
   plugins: [admin()]
 });
 
-export async function getActualUser() {
-  const session = await auth.api.getSession({
+export async function getSessionServer() {
+  return await auth.api.getSession({
     headers: await headers()
   });
+}
+
+export async function getActualUser() {
+  const session = await getSessionServer();
   if (!session) return null;
   const { id } = session.user;
   const user = await getUser(id);
@@ -80,8 +100,6 @@ export async function getActualUser() {
 }
 
 export async function getActualUserId() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  });
+  const session = await getSessionServer();
   return session?.user?.id;
 }

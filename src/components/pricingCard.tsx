@@ -1,7 +1,9 @@
+'use client';
+
 import { CheckIcon } from 'lucide-react';
 
 import { subscriptionTiersInOrder } from '@/data/subscriptionTiers';
-import { cn, formatCompactNumber, formatMoneytNumber } from '@/lib/utils';
+import { cn, formatDecimalNumber, formatMoneytNumber } from '@/lib/utils';
 
 import { Button } from './ui/button';
 import {
@@ -47,7 +49,7 @@ export default function PricingCard({
             {formatMoneytNumber(priceInCents / 100)} /mo
           </CardTitle>
           <CardDescription>
-            {formatCompactNumber(maxNumberOfArt)} oeuvres visibles
+            {formatDecimalNumber(maxNumberOfArt)} oeuvres visibles
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -62,7 +64,7 @@ export default function PricingCard({
         </CardContent>
         <CardFooter className="flex flex-col items-start gap-4">
           <Feature className="font-bold">
-            {maxNumberOfArt}
+            {maxNumberOfArt.toString()}
             {' oeuvres visibles'}
           </Feature>
         </CardFooter>

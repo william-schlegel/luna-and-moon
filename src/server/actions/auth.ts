@@ -1,6 +1,6 @@
 'use server';
 
-import { TierNames } from '@/data/subscriptionTiers';
+import { SignupSchemaType } from '@/form-schemas/auth';
 import { auth } from '@/lib/auth';
 
 export const signIn = async (email: string, password: string) => {
@@ -13,19 +13,19 @@ export const signIn = async (email: string, password: string) => {
   return result;
 };
 
-export const signUp = async (
-  email: string,
-  password: string,
-  name: string,
-  tier: TierNames
-) => {
-  const result = await auth.api.signUpEmail({
-    body: {
-      email,
-      password,
-      name,
-      tier
-    }
-  });
-  return result;
+export const signUp = async (data: SignupSchemaType) => {
+  try {
+    const result = await auth.api.signUpEmail({
+      body: {
+        email: data.email,
+        password: data.password,
+        name: data.firstName + ' ' + data.lastName,
+        tier: data.plan
+      }
+    });
+    return result;
+  } catch (error) {
+    console.error('error :>> ', error);
+    throw new Error("Erreur lors de l'inscription");
+  }
 };
