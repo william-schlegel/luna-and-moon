@@ -9,7 +9,8 @@ export const signupSchema = z.object({
   password: z
     .string()
     .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
-  plan: z.enum(tierNames)
+  plan: z.enum(tierNames),
+  image: z.string().url().optional()
 });
 
 export type SignupSchemaType = z.infer<typeof signupSchema>;

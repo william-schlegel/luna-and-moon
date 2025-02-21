@@ -21,21 +21,29 @@ import {
 import { Input } from '@/components/ui/input';
 import { subscriptionTiersInOrder } from '@/data/subscriptionTiers';
 import { SignupSchemaType, signupSchema } from '@/form-schemas/auth';
+import { UploadButton } from '@/lib/uploadthings';
 import { signUp } from '@/server/actions/auth';
+import { updateUserAction } from '@/server/actions/user';
 
-export default function SignUpForm() {
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+type SignUpFormProps = Readonly<{
+  userId?: string;
+  profile?: SignupSchemaType;
+}>;
+
+export default function SignUpForm({ profile, userId }: SignUpFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [imageError, setImageError] = useState<string | null>(null);
 
   const form = useForm<SignupSchemaType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      email: '',
-      firstName: '',
-      lastName: '',
-      plan: 'Free',
-      password: ''
+      email: profile?.email ?? '',
+      firstName: profile?.firstName ?? '',
+      lastName: profile?.lastName ?? '',
+      plan: profile?.plan ?? 'Free',
+      password: '',
+      image: profile?.image ?? ''
     }
   });
 
@@ -43,7 +51,10 @@ export default function SignUpForm() {
     setIsSubmitting(true);
     setSubmitError(null);
     try {
-      await signUp(data);
+      if (profile && userId) {
+        const success = await updateUserAction(userId, data);
+        if (!success) setSubmitError('Impossible de mettre à jour le profil');
+      } else await signUp(data);
     } catch (error) {
       console.error('error :>> ', error);
       setSubmitError(error as string);
@@ -51,18 +62,8 @@ export default function SignUpForm() {
     setIsSubmitting(false);
   };
 
-  const handleImageUpload = (e: React.ChangeEvent) => {
-    const file = (e.target as HTMLInputElement).files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
   const plan = form.watch('plan');
+  const image = form.watch('image');
 
   return (
     <Card className="mx-auto w-full max-w-4xl">
@@ -72,19 +73,27 @@ export default function SignUpForm() {
             <div className="space-y-4">
               <div className="flex items-center gap-4">
                 <Avatar className="h-20 w-20">
-                  <AvatarImage src={profileImage ?? ''} />
+                  <AvatarImage src={image ?? ''} />
                   <AvatarFallback>Photo</AvatarFallback>
                 </Avatar>
-                <FormItem>
-                  <FormLabel>Photo de profil</FormLabel>
-                  <FormControl>
-                    <Input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                    />
-                  </FormControl>
-                </FormItem>
+                <UploadButton
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+                    form.setValue('image', res[0].ufsUrl);
+                    setImageError(null);
+                  }}
+                  onUploadError={(error: Error) => {
+                    // Do something with the error.
+                    setImageError(error.message);
+                  }}
+                />
+                {imageError ? (
+                  <Alert variant="destructive">
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle>Erreur</AlertTitle>
+                    <AlertDescription>{imageError}</AlertDescription>
+                  </Alert>
+                ) : null}
               </div>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -131,23 +140,25 @@ export default function SignUpForm() {
                 )}
               />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Mot de passe</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="motde passe"
-                        type="password"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              {!userId && (
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mot de passe</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="motde passe"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
             </div>
 
             <div className="space-y-4">
@@ -166,7 +177,7 @@ export default function SignUpForm() {
 
             <Button type="submit" className="w-full" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="animate-spin" />}
-              {"S'inscrire"}
+              {userId ? 'Mettre à jour' : "S'inscrire"}
             </Button>
             {submitError ? (
               <Alert variant="destructive">

@@ -1,7 +1,15 @@
 import { desc, eq } from 'drizzle-orm';
 
 import { TierNames } from '@/data/subscriptionTiers';
-import { CACHE_TAGS, dbCache, getGlobalTag, getIdTag } from '@/lib/cache';
+import { SignupSchemaType } from '@/form-schemas/auth';
+import { getActualUser } from '@/lib/auth';
+import {
+  CACHE_TAGS,
+  dbCache,
+  getGlobalTag,
+  getIdTag,
+  revalidateDbCache
+} from '@/lib/cache';
 
 import { db } from '../../../db/db';
 import { ArtTable, user } from '../../../db/schema';
@@ -51,7 +59,9 @@ async function getUserInternal(userId: string) {
     tier: data.tier,
     role: data.role,
     image: data.image,
-    email: data.email
+    email: data.email,
+    firstName: data.firstName,
+    lastName: data.lastName
   };
 }
 
@@ -71,6 +81,25 @@ async function getArtistsWithArtsInternal() {
   console.log('getArtistsWithArts :>> ', data);
   if (!data) return null;
   return data;
+}
+
+export async function updateUser(data: SignupSchemaType, userId: string) {
+  const actualUser = await getActualUser();
+  if (!actualUser) return false;
+  if (userId !== actualUser.id && actualUser.role !== 'admin') return false;
+  const { rowCount } = await db
+    .update(user)
+    .set(data)
+    .where(eq(user.id, userId));
+
+  if (rowCount > 0) {
+    revalidateDbCache({
+      tag: CACHE_TAGS.user,
+      userId
+    });
+  }
+
+  return rowCount > 0;
 }
 
 // export function getProductCustomization({

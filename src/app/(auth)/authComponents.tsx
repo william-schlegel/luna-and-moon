@@ -49,7 +49,9 @@ export async function UserButton() {
       <DropdownMenuContent>
         <DropdownMenuLabel>{'Mon compte'}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Profile</DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href={`/profile/${user.id}`}>Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem>Compte</DropdownMenuItem>
         <DropdownMenuItem>Facturation</DropdownMenuItem>
         <DropdownMenuSeparator />
