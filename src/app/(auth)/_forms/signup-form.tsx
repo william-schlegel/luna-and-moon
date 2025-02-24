@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertCircle, Loader2 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import PricingCard from '@/components/pricingCard';
@@ -46,6 +46,11 @@ export default function SignUpForm({ profile, userId }: SignUpFormProps) {
       image: profile?.image ?? ''
     }
   });
+
+  useEffect(() => {
+    if (!userId) return;
+    form.unregister('password');
+  }, [userId, form]);
 
   const onSubmit = async (data: SignupSchemaType) => {
     setIsSubmitting(true);

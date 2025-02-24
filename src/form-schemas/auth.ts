@@ -8,7 +8,8 @@ export const signupSchema = z.object({
   lastName: z.string().min(2, 'Le nom doit contenir au moins 2 caractères'),
   password: z
     .string()
-    .min(8, 'Le mot de passe doit contenir au moins 8 caractères'),
+    .min(8, 'Le mot de passe doit contenir au moins 8 caractères')
+    .optional(),
   plan: z.enum(tierNames),
   image: z.string().url().optional()
 });
